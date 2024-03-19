@@ -2,6 +2,7 @@ package fr.isen.charabot.androiderestaurant
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,14 +13,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
+import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import fr.isen.charabot.androiderestaurant.model.*
 import fr.isen.charabot.androiderestaurant.ui.theme.AndroidERestaurantTheme
 
 class CategoryActivity : ComponentActivity() {
@@ -54,7 +55,7 @@ fun CategoryScreen(categoryName: String) {
         menuItems.forEach { menuItem ->
             Text(text = menuItem.title, modifier = Modifier.padding(bottom = 4.dp))
             Image(
-                painter = rememberImagePainter(menuItem.image),
+                painter = rememberAsyncImagePainter(menuItem.image),
                 contentDescription = menuItem.title,
                 modifier = Modifier.size(128.dp)
             )
@@ -62,17 +63,21 @@ fun CategoryScreen(categoryName: String) {
     }
 }
 
-fun fetchMenuItems(context: Context, categoryName: String, onResult: (List<MenuItem>) -> Unit) {
+fun fetchMenuItems(context: Context, categoryName: String, updateItems: (List<MenuItem>) -> Unit) {
     val queue = Volley.newRequestQueue(context)
     val url = "http://test.api.catering.bluecodegames.com/menu"
-    val jsonBody = JSONObject()
-    jsonBody.put("id_shop", "1")
+    val jsonBody = JSONObject().apply { put("id_shop", "1") }
 
-    val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, jsonBody,
+    val jsonObjectRequest = object : JsonObjectRequest(
+        Request.Method.POST, url, jsonBody,
         Response.Listener { response ->
-            val menuResponse = Gson().fromJson(response.toString(), MenuResponse::class.java)
-            val items = menuResponse.data.find { category -> category.name == categoryName }?.items ?: emptyList()
-
+            try {
+                val menuResponse = Gson().fromJson(response.toString(), MenuResponse::class.java)
+                val items = menuResponse.data.find { it.name == categoryName }?.items.orEmpty()
+                updateItems(items)
+            } catch (e: Exception) {
+                Log.e("fetchMenuItems", "Error parsing response", e)
+            }
         },
         Response.ErrorListener { error ->
             Toast.makeText(context, "Erreur : ${error.message}", Toast.LENGTH_LONG).show()
@@ -85,3 +90,7 @@ fun fetchMenuItems(context: Context, categoryName: String, onResult: (List<MenuI
 
     queue.add(jsonObjectRequest)
 }
+
+data class MenuResponse(val data: List<Category>)
+data class Category(val name: String, val items: List<MenuItem>)
+data class MenuItem(val title: String, val description: String, val image: String, val price: String)

@@ -1,26 +1,4 @@
 <resources>
-    <!-- Autres ressources de chaîne -->
     <string name="app_name">AndroidERestaurant</string>
-    <!-- Simuler les titres des éléments de menu -->
-    <string name="entrees">Entrées</string>
-    <array name="entrees_list">
-        <item>Salade César</item>
-        <item>Tomates Mozzarella</item>
-        <item>Bruschettas</item>
-    </array>
-
-    <string name="main_courses">Plats</string>
-    <array name="main_courses_list">
-        <item>Lasagnes à la Bolognaise</item>
-        <item>Steak Frites</item>
-        <item>Salmon Grillé</item>
-    </array>
-
-    <string name="desserts">Desserts</string>
-    <array name="desserts_list">
-        <item>Tiramisu</item>
-        <item>Panna Cotta</item>
-        <item>Cheesecake</item>
-    </array>
     <string name="title_activity_detail">DetailActivity</string>
 </resources>
