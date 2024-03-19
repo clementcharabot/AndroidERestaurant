@@ -1,18 +1,24 @@
-package fr.isen.charabot.androiderestaurant
-
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import fr.isen.charabot.androiderestaurant.CategoryActivity
 import fr.isen.charabot.androiderestaurant.ui.theme.AndroidERestaurantTheme
 
 class HomeActivity : ComponentActivity() {
@@ -24,59 +30,60 @@ class HomeActivity : ComponentActivity() {
             }
         }
     }
-
-    // Correctement surchargé onDestroy() à l'extérieur de onCreate()
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("HomeActivity", "L'activité Home est détruite.")
-    }
 }
 
 @Composable
 fun HomeScreen() {
-    Surface {
-        CategoryList()
-    }
-}
-
-@Composable
-fun CategoryList() {
     Column(
         modifier = Modifier
-            .padding(16.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        CategoryTitle("Entrée")
-        CategoryTitle("Plats")
-        CategoryTitle("Dessert")
+        // Votre code actuel pour afficher les boutons de catégorie
+        CategoryCard("Entrées")
+        CategoryDivider()
+        CategoryCard("Plats")
+        CategoryDivider()
+        CategoryCard("Desserts")
     }
 }
 
 @Composable
-fun CategoryTitle(title: String) {
+fun CategoryCard(categoryName: String) {
     val context = LocalContext.current
-    Card(
+    Text(
+        text = categoryName,
+        fontSize = 22.sp,
+        fontWeight = FontWeight.Bold,
         modifier = Modifier
             .fillMaxWidth()
+            .padding(vertical = 16.dp)
             .clickable {
-                val intent = Intent(context, CategoryActivity::class.java).apply {
-                    putExtra("category_name", title)
-                }
-                context.startActivity(intent)
+                // Utilisez Intent pour passer à CategoryActivity
+                context.startActivity(Intent(context, CategoryActivity::class.java).apply {
+                    putExtra("category_name", categoryName)
+                })
             },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Text(
-            text = title,
-            modifier = Modifier.padding(16.dp)
-        )
-    }
+        color = Color(0xFFF57C00),
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+fun CategoryDivider() {
+    Divider(
+        color = Color.Gray,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp, vertical = 8.dp),
+        thickness = 1.dp
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
-fun MenuScreenPreview() {
+fun DefaultPreview() {
     AndroidERestaurantTheme {
         HomeScreen()
     }

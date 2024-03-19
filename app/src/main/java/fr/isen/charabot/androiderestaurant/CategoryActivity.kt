@@ -1,12 +1,13 @@
 package fr.isen.charabot.androiderestaurant
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,7 +20,7 @@ import fr.isen.charabot.androiderestaurant.ui.theme.AndroidERestaurantTheme
 class CategoryActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val categoryName = intent.getStringExtra("category_name") ?: "Catégorie Inconnue"
+        val categoryName = intent.getStringExtra("category_name") ?: "Catégorie inconnue"
 
         setContent {
             AndroidERestaurantTheme {
@@ -36,12 +37,22 @@ fun CategoryScreen(categoryName: String) {
         context.getString(R.string.entrees) -> stringArrayResource(id = R.array.entrees_list).toList()
         context.getString(R.string.main_courses) -> stringArrayResource(id = R.array.main_courses_list).toList()
         context.getString(R.string.desserts) -> stringArrayResource(id = R.array.desserts_list).toList()
-        else -> listOf<String>()
+        else -> emptyList()
     }
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         items(items) { item ->
-            Text(text = item, modifier = Modifier.padding(vertical = 8.dp))
+            Text(
+                text = item,
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .clickable {
+                        val intent = Intent(context, DetailActivity::class.java).apply {
+                            putExtra("selected_item", item)
+                        }
+                        context.startActivity(intent)
+                    }
+            )
         }
     }
 }

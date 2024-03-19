@@ -22,4 +22,5 @@
         <item>Panna Cotta</item>
         <item>Cheesecake</item>
     </array>
+    <string name="title_activity_detail">DetailActivity</string>
 </resources>

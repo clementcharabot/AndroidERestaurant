@@ -10,25 +10,25 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AndroidERestaurant"
+        android:theme="@style/Theme.DroidRestaurant"
         tools:targetApi="31">
-
         <activity
-            android:name="HomeActivity"
+            android:name=".DetailActivity"
+            android:exported="false"
+            android:label="@string/title_activity_detail"
+            android:theme="@style/Theme.DroidRestaurant" />
+        <activity
+            android:name=".HomeActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AndroidERestaurant">
+            android:label="DroidRestaurant"
+            android:theme="@style/Theme.DroidRestaurant">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="CategoryActivity">
-        </activity>
-
-
+        <activity android:name=".CategoryActivity"></activity>
     </application>
 
 </manifest>
