@@ -3,6 +3,7 @@ package fr.isen.charabot.androiderestaurant
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,13 +37,5 @@ fun DetailScreen(selectedItem: String) {
     ) {
         Text(text = "Détails du plat sélectionné :", modifier = Modifier.padding(bottom = 16.dp))
         Text(text = selectedItem)
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    AndroidERestaurantTheme {
-        DetailScreen("Nom du plat")
     }
 }

@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.isen.charabot.androiderestaurant.ui.theme.AndroidERestaurantTheme
-import fr.isen.charabot.androiderestaurant.DetailActivity
 
 class CategoryActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +41,7 @@ fun CategoryScreen(categoryName: String) {
     }
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
-        items(items) { item ->
+        this.items(items) { item ->
             Text(
                 text = item,
                 modifier = Modifier
