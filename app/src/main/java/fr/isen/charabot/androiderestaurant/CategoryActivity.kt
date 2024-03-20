@@ -101,9 +101,9 @@ fun MenuItemComposable(item: MenuItem) {
             ImageFromUrls(urls = item
                 .images)
         } else {
-            Log.d("MenuItemComposable", "Aucune URL d'image pour l'item: ${item.nameFr}")
+            Log.d("MenuItemComposable", "Aucune URL d'image pour l'item: ${item.name_fr}")
         }
-        Text(text = item.nameFr)
+        Text(text = item.name_fr)
     }
 }
 
@@ -154,9 +154,9 @@ data class Category(
 
 data class MenuItem(
     val id: String, // Identifiant de l'item
-    val nameFr: String, // Nom français de l'item
+    val name_fr: String, // Nom français de l'item
     val idCategory : String, // Identifiant de la catégorie de l'item
-    val categNameFr: String, // Nom français de la catégorie de l'item
+    val categ_namefr: String, // Nom français de la catégorie de l'item
     val images: List<String>, // URLs des images de l'item
     val ingredients: List<Ingredient>, // Liste des ingrédients de l'item
     val prices: List<Price> // Liste des prix de l'item

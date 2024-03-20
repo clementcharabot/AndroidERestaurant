@@ -17,13 +17,14 @@ import fr.isen.charabot.androiderestaurant.ui.theme.AndroidERestaurantTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AndroidERestaurantTheme {
-                HomeScreen(context = context)
+                HomeScreen(context = LocalContext.current)
             }
         }
     }
@@ -50,7 +51,7 @@ fun HomeScreen(context: Context) {
         categories.forEach { category ->
             CategoryCard(name = category, onClick = { categoryName ->
                 val intent = Intent(context, CategoryActivity::class.java).apply {
-                    putExtra("categoryName", categoryName)
+                    putExtra("category_name", categoryName)
                 }
                 context.startActivity(intent)
             })
