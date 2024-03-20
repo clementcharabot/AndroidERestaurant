@@ -1,6 +1,7 @@
 package fr.isen.charabot.androiderestaurant
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -21,6 +22,8 @@ class DetailActivity : ComponentActivity() {
                 DetailScreen(selectedItem)
             }
         }
+
+        Log.d("DetailActivity", "Détails du plat sélectionné : $selectedItem")
     }
 }
 
