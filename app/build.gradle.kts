@@ -68,7 +68,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation ("io.coil-kt:coil-compose:2.1.0") // ou la version actuelle
+    implementation ("com.google.accompanist:accompanist-pager:0.24.7-alpha") // ou
     implementation ("com.android.volley:volley:1.2.1")
-    implementation ("com.google.code.gson:gson:2.8.9")
-    implementation("io.coil-kt:coil-compose:2.1.0")
+    implementation ("com.google.code.gson:gson:2.10.1")
 }

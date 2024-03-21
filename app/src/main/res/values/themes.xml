@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <color name="header_background_color">#FF8519</color>
     <color name="header_text_color">#FFFFFF</color>
     <color name="background_color">#FFFFFF</color> <!-- Ajout d'une nouvelle couleur pour le fond -->
@@ -13,13 +12,10 @@
     <!-- Style pour l'action bar avec la couleur de fond personnalisée -->
     <style name="MyActionBar" parent="@android:style/Widget.Material.ActionBar">
         <item name="android:background">@color/header_background_color</item>
-        <!-- Vous pouvez également définir la couleur du texte de l'action bar si nécessaire -->
         <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
     </style>
-
-    <!-- Style pour le texte du titre de l'action bar -->
     <style name="MyActionBarTitleText" parent="@android:style/TextAppearance.Material.Widget.ActionBar.Title">
         <item name="android:textColor">@color/header_text_color</item>
     </style>
 
-</resources>
+ </resources>
