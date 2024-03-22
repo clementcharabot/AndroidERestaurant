@@ -24,33 +24,42 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.isen.charabot.androiderestaurant.ui.theme.AndroidERestaurantTheme
 
+// Écran d'accueil de l'application qui affiche la section de salutation et les boutons des catégories.
 class HomeActivity : ComponentActivity() {
+    // Cette méthode est appelée lors de la création de l'activité.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Définit le contenu de l'activité en utilisant Jetpack Compose.
         setContent {
+            // Applique le thème de l'application à l'écran d'accueil.
             AndroidERestaurantTheme {
+                // Surface est un conteneur Composable qui utilise le schéma de couleurs du thème.
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                    // Appelle la fonction Composable HomeScreen pour construire l'écran.
                     HomeScreen(context = this)
                 }
             }
         }
     }
 
+    // Fonction Composable qui construit l'écran d'accueil.
     @Composable
     fun HomeScreen(context: Context) {
+        // Utilise une colonne pour disposer les éléments verticalement.
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFFFFFFF)), // Assuming this is the background color of the image
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+                .fillMaxSize() // La colonne occupe toute la taille disponible.
+                .background(Color(0xFFFFFFFF)), // Définit la couleur d'arrière-plan de la colonne.
+            horizontalAlignment = Alignment.CenterHorizontally, // Centre les enfants horizontalement.
+            verticalArrangement = Arrangement.Top // Alignement vertical en haut.
         ) {
-            GreetingSection() // This will show the title and the mascot at the top
-            Spacer(modifier = Modifier.height(64.dp)) // Fixed space after the greeting section
-            CategoryButtons(context = context)
-            Spacer(modifier = Modifier.height(64.dp)) // Fixed space after the category buttons
+            GreetingSection() // Affiche la section de salutation avec le texte de bienvenue.
+            Spacer(modifier = Modifier.height(64.dp)) // Espace fixe après la section de salutation.
+            CategoryButtons(context = context) // Affiche les boutons des catégories (Entrées, Plats, Desserts).
+            Spacer(modifier = Modifier.height(64.dp)) // Espace fixe après les boutons des catégories.
         }
     }
+
 
 
     @Composable
