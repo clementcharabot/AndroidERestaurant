@@ -1,6 +1,5 @@
 package fr.isen.charabot.androiderestaurant
 
-import ShoppingActivity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -31,6 +30,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
@@ -103,6 +103,7 @@ private fun parseMenuItems(response: JSONObject): List<MenuItem> {
     return emptyList()
 }
 
+
 @Composable
 fun MenuItemDetails(menuItem: MenuItem) {
     var quantity by remember { mutableStateOf(1) }
@@ -113,14 +114,33 @@ fun MenuItemDetails(menuItem: MenuItem) {
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = rememberImagePainter(data = menuItem.images.firstOrNull()),
-                contentDescription = menuItem.name_fr,
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f),
-                contentScale = ContentScale.Crop
-            )
+                    .aspectRatio(1f)
+            ) {
+                val painter = rememberImagePainter(
+                    data = menuItem.images.firstOrNull(),
+                    builder = {
+                        error(R.drawable.error) // Error image if original image can't be loaded
+                    }
+                )
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+                if (painter.state is ImagePainter.State.Loading) {
+                    Text(
+                        text = "Loading...", // Placeholder text displayed while image is loading
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+
             Spacer(Modifier.height(8.dp))
             Text(
                 text = menuItem.name_fr,

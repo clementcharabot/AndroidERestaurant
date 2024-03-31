@@ -129,11 +129,18 @@ fun MenuItemComposable(item: MenuItem, onClick: (MenuItem) -> Unit) {
             text = item.name_fr,
             modifier = Modifier.padding(top = 8.dp)
         )
+        // Affichage du prix avec le signe €
+        Text(
+            text = "${item.getFirstPriceFormatted()} €", // Ajout du signe € avant le prix
+            modifier = Modifier.padding(top = 4.dp)
+        )
     }
 }
 
+
+
 @Composable
-fun ImageFromUrls(urls: List<String>, imageDefault: Int = R.drawable.androidcook) {
+fun ImageFromUrls(urls: List<String>, imageDefault: Int = R.drawable.error) {
     var currentUrlIndex by remember { mutableStateOf(0) }
     val painter = rememberImagePainter(
         data = urls.getOrNull(currentUrlIndex) ?: "",

@@ -2,5 +2,5 @@
     <string name="app_name">AndroidERestaurant</string>
     <string name="title_activity_detail">Détails</string>
     <string name="title_activity_category">Catégories</string>
-    <string name="title_activity_shopping">ShoppingActivity</string>
+    <string name="title_activity_shopping">Commande</string>
 </resources>
