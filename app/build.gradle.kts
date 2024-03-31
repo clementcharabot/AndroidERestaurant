@@ -59,7 +59,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.tools.core)
+    implementation(libs.engage.core)
+    implementation(libs.generativeai)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -68,8 +69,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation ("io.coil-kt:coil-compose:2.1.0") // ou la version actuelle
-    implementation ("com.google.accompanist:accompanist-pager:0.24.7-alpha") // ou
-    implementation ("com.android.volley:volley:1.2.1")
-    implementation ("com.google.code.gson:gson:2.10.1")
+    implementation("com.android.volley:volley:1.2.1")
+    implementation("com.google.code.gson:gson:2.8.9")
+    implementation ("io.coil-kt:coil-compose:1.4.0")
+    implementation ("com.google.accompanist:accompanist-pager:0.33.1-alpha")
+    implementation ("com.google.android.material:material:1.12.0-beta01")
+
 }

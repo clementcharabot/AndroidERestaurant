@@ -12,6 +12,8 @@ appcompat = "1.6.1"
 tracingPerfettoHandshake = "1.0.0"
 volley = "1.2.1"
 toolsCore = "1.0.0-alpha07"
+engageCore = "1.4.0"
+generativeai = "0.2.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,6 +34,8 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-tracing-perfetto-handshake = { group = "androidx.tracing", name = "tracing-perfetto-handshake", version.ref = "tracingPerfettoHandshake" }
 volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 androidx-tools-core = { group = "androidx.privacysandbox.tools", name = "tools-core", version.ref = "toolsCore" }
+engage-core = { group = "com.google.android.engage", name = "engage-core", version.ref = "engageCore" }
+generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

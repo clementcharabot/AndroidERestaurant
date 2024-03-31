@@ -2,7 +2,8 @@
 <resources>
     <color name="header_background_color">#FF8519</color>
     <color name="header_text_color">#FFFFFF</color>
-    <color name="background_color">#FFFFFF</color> <!-- Ajout d'une nouvelle couleur pour le fond -->
+    <color name="background_color">#FFFFFF
+    </color> <!-- Ajout d'une nouvelle couleur pour le fond -->
 
     <style name="Theme.DroidRestaurant" parent="android:Theme.Material.Light">
         <!-- Conservez la couleur de fond de l'action bar comme définie -->
@@ -14,8 +15,9 @@
         <item name="android:background">@color/header_background_color</item>
         <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
     </style>
+
     <style name="MyActionBarTitleText" parent="@android:style/TextAppearance.Material.Widget.ActionBar.Title">
         <item name="android:textColor">@color/header_text_color</item>
     </style>
 
- </resources>
+</resources>

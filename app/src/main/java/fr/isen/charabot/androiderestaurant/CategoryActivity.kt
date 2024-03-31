@@ -1,34 +1,26 @@
 package fr.isen.charabot.androiderestaurant
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
+import coil.compose.rememberImagePainter
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
@@ -42,17 +34,30 @@ class CategoryActivity : ComponentActivity() {
         val categoryName = intent.getStringExtra("categoryName") ?: "Catégorie"
 
         setContent {
-            val menuItems = remember {
-                mutableStateOf<List<MenuItem>>(listOf())
-            }
+            val isLoading = remember { mutableStateOf(true) }
+            val menuItems = remember { mutableStateOf<List<MenuItem>>(listOf()) }
+            val context = LocalContext.current
 
             AndroidERestaurantTheme {
-                Surface(color = MaterialTheme.colorScheme.background) {
-                        MenuScreen(categoryName = categoryName, items = menuItems.value)
+                Column {
+                    if (isLoading.value) {
+                        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                    } else {
+                        MenuScreen(categoryName = categoryName, items = menuItems.value, onClick = { menuItem ->
+                            val intent = Intent(context, DetailCategoryActivity::class.java).apply {
+                                val gson = Gson()
+                                val menuItemJson = gson.toJson(menuItem)
+                                putExtra("menuItem", menuItemJson)
+                            }
+                            context.startActivity(intent)
+                        })
+                    }
                 }
             }
+
             fetchMenuItems(categoryName) { items ->
                 menuItems.value = items
+                isLoading.value = false
             }
         }
     }
@@ -65,27 +70,26 @@ class CategoryActivity : ComponentActivity() {
 
         val jsonObjectRequest = JsonObjectRequest(Request.Method.POST, url, params,
             { response ->
-                Log.d("CategoryActivity", "Réponse de l'API: $response") // Ajout du log ici
+                Log.d("CategoryActivity", "Réponse de l'API: $response")
                 try {
                     val gson = Gson()
                     val menuResponse = gson.fromJson(response.toString(), MenuResponse::class.java)
                     val filteredItems =
                         menuResponse.data.firstOrNull { it.name_fr == categoryName }?.items
                             ?: emptyList()
-                    Log.d("CategoryActivity", "Éléments filtrés pour '$categoryName': $filteredItems")
                     onResult(filteredItems)
                 } catch (e: Exception) {
                     Log.e("CategoryActivity", "Parsing error", e)
+                    onResult(emptyList())
                 }
             },
             { error ->
                 error.printStackTrace()
-                val errorMessage = error.message ?: "Unknown error" // Utilisez le message d'erreur ou "Unknown error" s'il est nul
-                Log.e("CategoryActivity", "Volley error: $errorMessage")
-                this@CategoryActivity.runOnUiThread { // Utilisez this@CategoryActivity pour obtenir le contexte de l'activité
-                    Toast.makeText(this@CategoryActivity, "Failed to load data: $errorMessage", Toast.LENGTH_LONG)
-                        .show()
+                Log.e("CategoryActivity", "Volley error: ${error.message}")
+                runOnUiThread {
+                    Toast.makeText(this, "Failed to load data: ${error.message}", Toast.LENGTH_LONG).show()
                 }
+                onResult(emptyList())
             })
 
         queue.add(jsonObjectRequest)
@@ -93,121 +97,102 @@ class CategoryActivity : ComponentActivity() {
 }
 
 @Composable
-fun MenuScreen(categoryName: String, items: List<MenuItem>) {
+fun MenuScreen(categoryName: String, items: List<MenuItem>, onClick: (MenuItem) -> Unit) {
     Column {
         Text(
             text = categoryName,
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(16.dp)
         )
-        LazyColumn {
+        LazyColumn(
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
+        ) {
             items(items) { item ->
-                MenuItemComposable(item)
+                MenuItemComposable(item = item, onClick = onClick)
             }
         }
     }
 }
 
 @Composable
-fun MenuItemComposable(item: MenuItem) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally // Centre les éléments horizontalement
-    ) {
-        val imageUrl = item.images.firstOrNull()
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(imageUrl)
-                .build()
-        )
-
-        // Réduire la taille de l'image pour qu'elle soit plus petite
-        Image(
-            painter = painter,
-            contentDescription = "Image de ${item.name_fr}",
-            modifier = Modifier
-                .size(120.dp) // Taille spécifique pour les images
-                .aspectRatio(1f), // Maintient un aspect ratio carré
-            contentScale = ContentScale.Crop
-        )
-
-        // S'il y a une erreur de chargement de l'image, afficher un message d'erreur.
-        if (painter.state is AsyncImagePainter.State.Error) {
-            Text(
-                text = "Impossible de charger l'image",
-                color = Color.Red,
-                modifier = Modifier.padding(top = 4.dp)
-            )
+fun MenuItemComposable(item: MenuItem, onClick: (MenuItem) -> Unit) {
+    Column(modifier = Modifier
+        .padding(8.dp)
+        .clickable { onClick(item) }) {
+        if (item.images.isNotEmpty()) {
+            ImageFromUrls(urls = item.images)
+        } else {
+            // Placeholder si aucune image n'est disponible
+            Text(text = "Image non disponible")
         }
-
-        // Titre du plat
         Text(
             text = item.name_fr,
-            style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(top = 8.dp)
-        )
-
-        // Prix du plat
-        Text(
-            text = getFormattedPrice(item.prices),
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(top = 4.dp)
         )
     }
 }
 
-
-fun getFormattedPrice(prices: List<Price>): String {
-    return if (prices.isNotEmpty()) {
-        "${prices[0].price}€" // Vous pouvez ajouter votre propre logique de formatage ici
-    } else "Prix non disponible"
-}
 @Composable
-fun ImageFromUrls(urls: List<String>) {
+fun ImageFromUrls(urls: List<String>, imageDefault: Int = R.drawable.androidcook) {
     var currentUrlIndex by remember { mutableStateOf(0) }
-
-    val painter = rememberAsyncImagePainter(
-        ImageRequest.Builder(LocalContext.current).data(urls.getOrNull(currentUrlIndex)).build()
+    val painter = rememberImagePainter(
+        data = urls.getOrNull(currentUrlIndex) ?: "",
+        builder = {
+            crossfade(true)
+            error(imageDefault)
+            placeholder(imageDefault)
+            listener(onError = { _, _ ->
+                if (currentUrlIndex < urls.size - 1) {
+                    currentUrlIndex++
+                }
+            })
+        }
     )
 
     Image(
         painter = painter,
-        contentDescription = null, // Fournissez une description appropriée pour l'accessibilité.
+        contentDescription = null,
         modifier = Modifier
-            .size(150.dp) // Définissez la taille de l'image. Ajustez selon vos besoins.
-            .aspectRatio(1f),
-        contentScale = ContentScale.Crop // Gère comment l'image doit être redimensionnée ou déplacée pour remplir les dimensions données.
+            .aspectRatio(1f)
+            .fillMaxWidth(),
+        contentScale = ContentScale.Crop
     )
 }
 
-
-// Classes pour la réponse et les données
 data class MenuResponse(
-    val data: List<Category> // Assurez-vous que cela correspond au champ "data" du JSON
+    val data: List<Category>
 )
 
 data class Category(
-    val name_fr: String, // Nom français de la catégorie
-    val items: List<MenuItem> // Liste des items dans cette catégorie
+    val name_fr: String,
+    val items: List<MenuItem>
+)
+
+data class MenuItem(
+    val id: String,
+    val name_fr: String,
+    val id_category: String,
+    val categ_name_fr: String,
+    val images: List<String>,
+    val ingredients: List<Ingredient>,
+    val prices: List<Price>
 )
 
 data class Ingredient(
-    val id: String, // Identifiant de l'ingrédient
-    val id_shop: String, // Identifiant du magasin/shop
-    val name_fr: String, // Nom français de l'ingrédient
-    val create_date: String, // Date de création de l'ingrédient
-    val update_date: String, // Date de mise à jour de l'ingrédient
-    val id_pizza: String? // Identifiant de la pizza (si applicable, peut ne pas être présent pour tous les ingrédients, donc nullable)
+    val id: String,
+    val id_shop: String,
+    val name_fr: String,
+    val create_date: String,
+    val update_date: String,
+    val id_pizza: String?
 )
 
 data class Price(
-    val id: String, // Identifiant du prix
-    val id_pizza: String, // Identifiant de la pizza
-    val id_size: String, // Identifiant de la taille
-    val price: String, // Valeur du prix
-    val create_date: String, // Date de création du prix
-    val update_date: String, // Date de mise à jour du prix
-    val size: String // Taille correspondante au prix
+    val id: String,
+    val id_pizza: String,
+    val id_size: String,
+    val price: String,
+    val create_date: String,
+    val update_date: String,
+    val size: String
 )
